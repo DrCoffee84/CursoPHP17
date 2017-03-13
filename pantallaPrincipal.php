@@ -64,10 +64,9 @@
  </head>
  <body>
  <?php echo '<h1>Intraconsulta Rancio v1.0 (bueno mas rancio)</h1>' ; 
+	echo '<a href="http://localhost/git/CursoPHP17/pantallaABM.php" >ABM de materia</a><br>'; 
 	
-	echo '<a href="http://localhost/Desafio_1/pantallaABM.php" >ABM de materia-</a>'; 
-	
-	echo "Materias: " . $cantidadMaterias. "<br>";
+	echo "Materias: " . $cantidadMaterias. "<br><br>";
 	$i=0;	
 	while($i<$cantidadMaterias){
 		echo "	<tr><td>".$materia[$i]["id"]."</td>
@@ -75,7 +74,7 @@
 				<td>".$materia[$i]["carrera_id"]."</td>
 				<td>".$materia[$i]["descripcion"]."</td>
 				<td>".$materia[$i]["carga_horaria"]."</td>
-			</tr>\n";
+			</tr>\n<br>";
 	$i++;
 	}
 ?>
