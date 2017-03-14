@@ -22,16 +22,15 @@
 		$consulta = "DELETE FROM `materia` WHERE `materia`.`id` =". $materiaID .";";
 		$result = $conn->query($consulta);
 	}
-	
 	if(isset($_POST['mod'])){
 		$materiaID = $_POST['materiaIdMod'];
 		$nombre = $_POST['nombreMod'];
 		$carreraId = $_POST['carreraMod'];
 		$descripcion = $_POST['descripcionMod'];
 		$cargaHoraria = $_POST['cargaMod'];	
-		$val = $materiaID .",". $carreraId .",'" . $nombre  ."','" .  $descripcion  ."'," .  $cargaHoraria;
 		
-		echo $val;
+		$consulta = "UPDATE `materia` SET `carrera_id` = '" . $carreraId ."', `nombre` = '". $nombre."', `descripcion` = '".$descripcion."', `carga_horaria` = '".$cargaHoraria."' WHERE `materia`.`id` = ".$materiaID.";";
+		$result = $conn->query($consulta);
 	}
-	echo '<p>Kami-sama</p>';
+	echo '<p>Kami-sama puede ser mi cruel >:( </p>';
 ?>

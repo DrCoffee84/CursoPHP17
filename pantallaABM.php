@@ -6,7 +6,34 @@
 			$materia = $_SESSION['materia'];
 		if( $cantidadCarreras > 0 )
 			$carreras = $_SESSION['carrera'];
-		
+		$mostramela = false;
+		if(isset($_POST['materiaIdMod'])){
+			$servername = "localhost";
+			$username = "root";
+			$password = "";
+			$dataBase = "desafio";
+
+			// Creo la conexion 
+			$conn = new mysqli($servername, $username, $password, $dataBase);
+
+			// Verifico la conexion
+			if ($conn->connect_error) {
+				die("Problema al conectar con la base de datos" . $conn->connect_error);
+			} 
+			$materiaID = $_POST['materiaIdMod'];
+			$sql = "SELECT * FROM materia where id=".$materiaID.";";
+			$result = $conn->query($sql);
+			
+			if ($result->num_rows > 0) {
+				$row = $result->fetch_assoc();
+				$materiaMod['id'] = $row['id'];
+				$materiaMod['nombre'] =  $row["nombre"];
+				$materiaMod['carrera_id'] =  $row["carrera_id"];
+				$materiaMod['descripcion'] =  $row["descripcion"];
+				$materiaMod['carga_horaria'] =  $row["carga_horaria"];	
+			}
+			$mostramela = true;
+		}
 ?>
 
 <html>
@@ -76,58 +103,67 @@
 		</form>
 	</div>
 	
-	<div id="contenedorModificar" style="display:none;">
-		<form id="formularioMod" action="consultas.php" role="form" id="mod" method="post" enctype="multipart/form-data">
-			<select name="materiaIdMod" id="materiaIdMod" onChange="SeleccionarMateria()" placeholder="Seleccione Materia">
-				 <option select value="-1"></option>
+	<?php
+		if($mostramela)
+			echo '<div id="contenedorModificar" style="display:inline;">';
+		else
+			echo '<div id="contenedorModificar" style="display:none;">';			
+	?>
+		<form id="formularioMod" action="pantallaABM.php" role="form" method="post" enctype="multipart/form-data">
+					
+				<br>
+				<select name="materiaIdMod" id="materiaIdMod" onChange="SeleccionarMateria()" placeholder="Seleccione Materia">			
+				<option select value="-1">Seleccionar...</option>				
 				<?php
 					if( $cantidadMaterias > 0 ){
-						for($i=0; $i < $cantidadMaterias; $i++){
+						for($i=0; $i < $cantidadMaterias; $i++)
 							echo '<option value="'.$materia[$i]['id'].'" >'.$materia[$i]['nombre'].'</option>';
-						}
-					}else{
+					}else
 						echo '<option value="0">No hay materias</option>';
-					}
 				?>
-			</select>
-			<div id="contenedorMateriaModificar" style="display:none;">
+			</select><br><br>
+		</form>
+		<form id="formularioMod2" action="consultas.php" role="form" method="post" enctype="multipart/form-data">
+			<input type="text" class="form-control" id="materiaIdMod" name="materiaIdMod" placeholder="Ingrese ID" value = "<?php echo $materiaMod['id']; ?>" style="display:none;"/>
+			<?php
+			if($mostramela)
+				echo '<div id="contenedorMateriaModificar" style="display:inline;">';
+			else
+				echo '<div id="contenedorMateriaModificar" style="display:none;">';			
+			?>
 			<label class="labelAlta"> Carrera </label>
 			<select name="carreraMod" id="carreraMod">
 				<?php
 					if( $cantidadCarreras > 0 ){
 						for($i=0; $i < $cantidadCarreras; $i++){
-							echo '<option value="'.$carreras[$i]['id'].'" >'.$carreras[$i]['nombre'].'</option>';
+							echo '<option';
+							if($carreras[$i]['id'] == $materiaMod['carrera_id'])
+								echo ' selected';
+							echo ' value="'.$carreras[$i]['id'].'" >'.$carreras[$i]['nombre'].'</option>';
 						}
 					}else{
 						echo '<option value="0">No hay opciones</option>';
 					}
-					/* Codigo magico para que aparezca la carrera de la base de datos.
-						echo '<option value="'.$row["rango"].'"';
-						if($row['rango']==$rango ) {
-						echo "selected";
-						}
-						echo ">".$row['rango']."</option>";
-					*/
 				?>
 			</select>
 			<br>
 			<br>
 
 			<label class="labelAlta" >	Nombre </label>
-			<input type="text" class="form-control" id="nombreMod" name="nombreMod" placeholder="Ingrese el nombre" onKeyPress="return validarLetras(event);"/>
+			<input type="text" class="form-control" id="nombreMod" name="nombreMod" placeholder="Ingrese el nombre" onKeyPress="return validarLetras(event);" value = "<?php echo $materiaMod['nombre']; ?>" />
 			<br>
 			<br>
 			<label class="labelAlta">  Carga Horaria </label>
+			<input type="radio" name="cargaMod" value="2" <?php if($materiaMod['carga_horaria']==2)echo 'checked';?> > 2 (dos) <br> 
 			<br>
-			<input type="radio" name="cargaMod" value="2"> 2 (dos) <br>
-			<input type="radio" name="cargaMod" value="4"> 4 (cuatro) <br>
-			<input type="radio" name="cargaMod" value="6"> 6 (seis) <br>
-			<input type="radio" name="cargaMod" value="8"> 8 (ocho) <br>
-			<input type="radio" name="cargaMod" value="10"> 10	(diez)<br>
+			<input type="radio" name="cargaMod" value="4" <?php if($materiaMod['carga_horaria']==4)echo 'checked'?> > 4 (cuatro) <br>
+			<input type="radio" name="cargaMod" value="6" <?php if($materiaMod['carga_horaria']==6)echo 'checked'?> > 6 (seis) <br>
+			<input type="radio" name="cargaMod" value="8" <?php if($materiaMod['carga_horaria']==8)echo 'checked'?> > 8 (ocho) <br>
+			<input type="radio" name="cargaMod" value="10"<?php if($materiaMod['carga_horaria']==10)echo 'checked'?>  > 10	(diez)<br>
 			<br>
 			<label class="labelAlta">	Descripción: </label>
 			<br>
-			<textarea name="descripcionMod" id="descripcionMod" rows="10" cols="50" maxlength="255"></textarea>
+			<textarea name="descripcionMod" id="descripcionMod" rows="10" cols="50" maxlength="255"><?php echo $materiaMod['descripcion'];?></textarea>
 			<br>
 			<br>
 			<button type="submit" name="mod" onClick="modificar();"> Modificar </button>
@@ -153,7 +189,7 @@
 		if( $('#materiaIdMod').val() == "-1"){
 			$('#contenedorMateriaModificar').hide();
 		}else{
-			$('#contenedorMateriaModificar').show();
+			$('#formularioMod').submit();
 		}
 	}
 	function mostrar_alta(){
